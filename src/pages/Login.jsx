@@ -6,9 +6,11 @@ import Button from "react-bootstrap/Button";
 import Alert from "react-bootstrap/Alert";
 
 // importando o hook usestate para monitorar a mudança das variaveis
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 import { useNavigate } from "react-router-dom";
+
+const url = "http://localhost:5000/usuarios"
 
 const Login = () => {
   const [email, setEmail] = useState("");
@@ -18,18 +20,34 @@ const Login = () => {
   const [alertMensagem, setAlertMensagem] = useState("");
   const [alertVariant, setAlertVariant] = useState("danger");
 
-  // lista de usuarios
-  const usuarios = [
-    { id: 1, nome: "pedro", email: "pedro.gabriel2578@icloud.com", senha: "123" },
-    { id: 2, nome: "reubert", email: "seureubert@gmail.com", senha: "1010" },
-    { id: 3, nome: "andrez", email: "g.andrez10@gmail.com", senha: "0309" },
-    { id: 4, nome: "glauber", email: "glauberbarcellos@gmail.com", senha: "8486" },
-    { id: 5, nome: "tiago", email: "otiagobispo@gmail.com", senha: "123456" },
-  ]
+  
+
+  const [usuarios, setUsuarios] = useState([])
+
+
+  useEffect(() => {
+    async function fectchData() {
+      try {
+        const req = await fetch(url)
+        const users = await req.json()
+        console.log(users)
+        setUsuarios(users)
+
+      }
+      catch (erro) {
+        console.log(erro.message)
+
+      }
+    }
+    fectchData()
+
+  }, [])
+
+
 
   const navigate = useNavigate();
 
-  const gravarLocalStorage = (usuario) =>{
+  const gravarLocalStorage = (usuario) => {
     localStorage.setItem("userName", usuario.nome)
     localStorage.setItem("email", usuario.email)
   }

@@ -1,41 +1,34 @@
 import React from "react";
 import  CardProduto from "../components/CardProduto";
 import Container from "react-bootstrap/Container";
+import { useState, useEffect } from "react";
 
 import NavBarra from "../components/NavBarra";
 
 const Home = () => {
-  const produtos = [
-    {
-      id: 1,
-      nome: "LAMA",
-      descricao: "BARRACREW",
-      preco: "199,90",
-      categoria: "ROUPAS",
-      imagemUrl:
-        "https://imparskateshop.com.br/wp-content/uploads/2023/11/CAMISETA-BARRA-CREW-LAMA-OFF-WHITE-1-6.jpg",
-    },
+  const [produtos, setProdutos] = useState([])
 
-    {
-      id: 2,
-      nome: "AHLMA",
-      descricao: "BARRA CREW",
-      preco: "199,90",
-      categoria: "ROUPAS",
-      imagemUrl:
-        "https://cdn.awsli.com.br/300x300/787/787834/produto/245965738/camisa-ahlma-off-white-uvjxfkutyq.jpg",
-    },
-    {
-      id: 3,
-      nome: "LES VRAIS BRÉSILIENS",
-      descricao: "BARRA CREW",
-      preco: "199,90",
-      categoria: "ROUPAS",
-      imagemUrl:
-        "https://cdn.awsli.com.br/600x1000/787/787834/produto/282023922/camisa--barra-present--off-white-frente--k3vhyors1d.jpg",
-    },
-    
-  ];
+  const url = "http://localhost:5000/produtos"
+
+
+  useEffect(() => {
+    async function fectchData() {
+      try {
+        const req = await fetch(url)
+        const prods = await req.json()
+        console.log(prods)
+        setProdutos(prods)
+
+      }
+      catch (erro) {
+        console.log(erro.message)
+
+      }
+    }
+    fectchData()
+
+  }, [])
+ 
 
   return (
     <div>
