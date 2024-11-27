@@ -14,74 +14,86 @@ import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 
 const url = "http://localhost:5000/categoria"
+const urlProd = "http://localhost:5000/produtos";
+
 const CadastroProduto = () => {
-
-  const [categorias, setCategorias] = useState([])
-
-  
-
-
+  //Lista com categorias
+  const [categorias, setCategorias] = useState([]);
+  //UseEffect pra puxar os dados da api
   useEffect(() => {
-    async function fectchData() {
+    async function fetchData() {
       try {
-        const req = await fetch(url)
-        const cate = await req.json()
-        console.log(cate)
-        setCategorias(cate)
-
-      }
-      catch (erro) {
-        console.log(erro.message)
-
+        const req = await fetch(urlCate);
+        const cate = await req.json();
+        console.log(cate);
+        setCategorias(cate);
+      } catch (erro) {
+        console.log(erro.message);
       }
     }
-    fectchData()
+    fetchData();
+  }, []);
 
-  }, [])
+  //Link produto sem imagem
+  const linkImagem =
+    "https://www.malhariapradense.com.br/wp-content/uploads/2017/08/produto-sem-imagem.png";
 
-// link produto sem imagem
-const linkImagem =
-  "https://www.malhariapradense.com.br/wp-content/uploads/2017/08/produto-sem-imagem.png";
+  //Variáveis para o produto
+  const [nome, setNome] = useState("");
+  const [descricao, setDescricao] = useState("");
+  const [categoria, setCategoria] = useState("Eletrônicos");
+  const [preco, setPreco] = useState("");
+  const [imagemUrl, setImagemUrl] = useState("");
 
-//vairaveis para o produto
-const [nome, setNome] = useState("");
-const [descricao, setDescricao] = useState("");
-const [preco, setPreco] = useState("");
-const [imagem, setImagem] = useState("");
-const [categoria, setCategoria] = useState("");
+  //Variáveis para o alerta
+  const [alertClass, setAlertClass] = useState("mb-3 d-none");
+  const [alertMensagem, setAlertMensagem] = useState("");
+  const [alertVariant, setAlertVariant] = useState("danger");
 
-//variaveis para alerta
-const [alertClass, setAlertClass] = useState("mb-3 d-none");
-const [alertMensagem, setAlertMensagem] = useState("");
-const [alertVariant, setAlertVariant] = useState("danger");
+  // Criando o navigate
+  const navigate = useNavigate();
 
-const navigate = useNavigate();
+  //Função pra lidar com o envio dos dados
+  const handleSubmit = async (e) => {
+    //Previne a página de ser recarregada
+    e.preventDefault();
 
-// funçap pra lidar com regarregamento da pagina
-const handleSubmit = async (e) => {
-  //previne a pagina de ser regarregada
-  e.preventDefault();
-
-  if (nome != "") {
-    if (descricao != "") {
-      if (preco != "") {
-        const produto = { nome, descricao, categoria, preco, imagem };
-        console.log(produto);
-        alert("PRODUTO CADASTRADO COM SUCESSO");
-        navigate("/home");
+    if (nome != "") {
+      if (descricao != "") {
+        if (preco != "") {
+          const produto = { nome, descricao, categoria, preco, imagemUrl };
+          console.log(produto);
+          try {
+            const req = await fetch(urlProd, {
+              method: "POST",
+              headers: { "Content-type": "application/json" },
+              body: JSON.stringify(produto),
+            });
+            const res = req.json();
+            console.log(res);
+            setAlertClass("mb-3 mt-2");
+            setAlertVariant("success");
+            setAlertMensagem("Produto cadastrado com sucesso");
+            alert("Produto cadastrado com sucesso");
+            // navigate("/home");
+          } 
+          catch (error) {
+            console.log(error);
+          }
+        } 
+        else {
+          setAlertClass("mb-3 mt-2");
+          setAlertMensagem("O campo preço não pode ser vazio");
+        }
       } else {
         setAlertClass("mb-3 mt-2");
-        setAlertMensagem("O CAMPO DO PREÇO NAO PODE SER VAZIO");
+        setAlertMensagem("O campo descrição não pode ser vazio");
       }
     } else {
       setAlertClass("mb-3 mt-2");
-      setAlertMensagem("O CAMPO DO DESCRIÇÃO NAO PODE SER VAZIO");
+      setAlertMensagem("O campo nome não pode ser vazio");
     }
-  } else {
-    setAlertClass("mb-3 mt-2");
-    setAlertMensagem("O CAMPO DO NOME NAO PODE SER VAZIO");
-  }
-};
+  };
 
 return (
   <div>
